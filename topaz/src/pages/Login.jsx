@@ -19,7 +19,6 @@ function Login() {
   const handleLogin = (e) => {
     e.preventDefault();
     if (user.name == formData.username && user.pass == formData.password) {
-      alert("Login successful");
       setFormData({
         username: "",
         email: "",

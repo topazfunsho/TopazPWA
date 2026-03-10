@@ -7,7 +7,7 @@ function MobileNav() {
     <div className="">
       <div className="contain-justify m-nav">
         <div>
-          <Link to="/profile">
+          <Link to="/home">
             <FaHome size={30} color="black"/>
           </Link>
         </div>
