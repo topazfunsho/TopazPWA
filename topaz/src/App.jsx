@@ -7,6 +7,7 @@ import ExpertOption from "./pages/ExpertOption";
 import './App.css'
 import { useScreenSize } from "./hooks/useScreenSize";
 import { Routes, Route } from "react-router-dom";
+import Profile from "./pages/Profile";
 
 function App() {
 
@@ -28,6 +29,7 @@ function MobileLayout() {
       <Route path="/home" element={<Home />} />
       <Route path="/coming" element={<Coming />} />
       <Route path="/expertoption" element={<ExpertOption />} />
+      <Route path="/profile" element={<Profile />} />
     </Routes>
   );
 }

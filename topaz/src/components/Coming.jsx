@@ -3,8 +3,10 @@ import MobileNav from './MobileNav'
 function Coming() {
   return (
     <div className='contain-center'>
-        <h1>Coming Soon</h1>
-        <MobileNav />
+        <div>
+            <h1>Coming Soon</h1>
+            <MobileNav />
+        </div>
     </div>
   )
 }
