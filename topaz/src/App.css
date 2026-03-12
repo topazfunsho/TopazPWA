@@ -116,6 +116,11 @@ label{
   justify-content: space-around;
   align-items: center;
 }
+.contain-justify-between{
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
 .btn, .full-btn{
   padding: .6rem 1.8rem;
   border-radius: 50px;
