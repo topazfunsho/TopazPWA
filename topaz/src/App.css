@@ -60,7 +60,8 @@
   justify-self: center;
 }
 .signal-display{
-  height: 60vh;
+  max-height: 60%;
+  min-height: 40%;
   box-shadow: 2px 2px 30px rgba(0,0,0,0.5);
   border-radius: 1rem;
   margin: 1rem  1rem 2rem 1rem;
