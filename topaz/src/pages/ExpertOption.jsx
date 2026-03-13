@@ -32,8 +32,8 @@ function ExpertOption() {
             <p>Price: {sign.price}</p>
             <p>Signal: {sign.signal}</p>
             <p>Strength: {sign.strength}</p>
-            <p>Timeframe: {sign.timeFrame}</p>
-            <p>Entry Time: {sign.entrytime}</p>
+            <p>Timeframe: {sign.time_frame}</p>
+            <p>Entry Time: {sign.entry_time}</p>
           </div>
         ))}
         <div className="contain-justify-between">
