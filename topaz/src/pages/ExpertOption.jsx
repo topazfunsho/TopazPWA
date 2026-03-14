@@ -6,10 +6,17 @@ function ExpertOption() {
   const [signal, setSignal] = useState([]);
 
   const getSignals = async () => {
-    const res = await fetch("https://topaz-backend-vvuz.onrender.com/signals");
-    const data = await res.json();
-    setSignal(data);
-    console.log(data);
+    try {
+      const response = await fetch(
+        "https://topaz-backend-vvuz.onrender.com/signals",
+      );
+
+      const data = await response.json();
+      setSignal(data);
+      console.log(data);
+    } catch (error) {
+      console.error("Error fetching signals:", error);
+    }
   };
 
   // const handleStart = ()=>{
@@ -18,14 +25,14 @@ function ExpertOption() {
   // }
 
   //   starting signal with button
-//   const startBot = async () => {
-//     const res = await fetch(`${API}/start`, {
-//       method: "POST",
-//     });
+  //   const startBot = async () => {
+  //     const res = await fetch(`${API}/start`, {
+  //       method: "POST",
+  //     });
 
-//     const data = await res.json();
-//     console.log(data);
-//   };
+  //     const data = await res.json();
+  //     console.log(data);
+  //   };
 
   //   stopping signal with button
   const stopBot = async () => {
@@ -43,7 +50,6 @@ function ExpertOption() {
     const data = await res.json();
     console.log(data);
   };
-
 
   return (
     <div className="expert-display white-bg-2">
