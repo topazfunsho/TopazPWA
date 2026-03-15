@@ -80,9 +80,7 @@ function ExpertOption() {
     <div className="expert-display white-bg-2">
       <MobileNav />
       <div className="signal-display">
-        {loading ? (
-          <div className="loader"></div>
-        ) : (
+        {signal ? (
           <div>
             {signal.map((sign) => (
               <div key={sign.price} className="signal-card">
@@ -103,6 +101,8 @@ function ExpertOption() {
               </div>
             ))}
           </div>
+        ) : (
+            <div className="loader"></div>
         )}
       </div>
       <div className="action-btn">
