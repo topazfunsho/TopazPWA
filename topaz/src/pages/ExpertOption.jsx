@@ -51,26 +51,47 @@ function ExpertOption() {
     console.log(data);
   };
 
+  const now = new Date();
+
+  const day = now.getDay();
+  const hour = now.getHours();
+  const minute = now.getMinutes();
+
+  const [loading, setLoading] = useState(true);
+  useEffect(() => {
+    setTimeout(() => {
+      setLoading(false);
+    }, 3000);
+  }, []);
+
   return (
     <div className="expert-display white-bg-2">
       <MobileNav />
       <div className="signal-display">
-        {signal.map((sign) => (
-          <div key={sign.price} className="signal-card">
-            <h3>{sign.pair}</h3>
-            <p>Price: {sign.price}</p>
-            <p>Signal: {sign.signal}</p>
-            <p>Strength: {sign.strength}</p>
-            <p>Timeframe: {sign.time_frame}</p>
-            <p>Entry Time: {sign.entry_time}</p>
-            <p>Expiry: {sign.expiry}</p>
-            <div className="contain-justify-between">
-              <div></div>
-              <div>time</div>
-            </div>
-            <hr />
+        {loading ? (
+          <div className="loader"></div>
+        ) : (
+          <div>
+            {signal.map((sign) => (
+              <div key={sign.price} className="signal-card">
+                <h3>{sign.pair}</h3>
+                <p>Price: {sign.price}</p>
+                <p>Signal: {sign.signal}</p>
+                <p>Strength: {sign.strength}</p>
+                <p>Timeframe: {sign.time_frame}</p>
+                <p>Entry Time: {sign.entry_time}</p>
+                <p>Expiry: {sign.expiry}</p>
+                <div className="contain-justify-between">
+                  <div></div>
+                  <div>
+                    {day} - {hour}:{minute}
+                  </div>
+                </div>
+                <hr />
+              </div>
+            ))}
           </div>
-        ))}
+        )}
       </div>
       <div className="action-btn">
         <button onClick={getSignals}>Start</button>
