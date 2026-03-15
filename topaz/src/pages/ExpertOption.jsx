@@ -57,6 +57,18 @@ function ExpertOption() {
   const hour = now.getHours();
   const minute = now.getMinutes();
 
+  const days = [
+    "Sunday",
+    "Monday",
+    "Tuesday",
+    "Wednesday",
+    "Thursday",
+    "Friday",
+    "Saturday",
+  ];
+
+  const today = days[new Date().getDay()];
+
   const [loading, setLoading] = useState(true);
   useEffect(() => {
     setTimeout(() => {
@@ -84,7 +96,7 @@ function ExpertOption() {
                 <div className="contain-justify-between">
                   <div></div>
                   <div>
-                    {day} - {hour}:{minute}
+                    {today} - {hour}:{minute}
                   </div>
                 </div>
                 <hr />
