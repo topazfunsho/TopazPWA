@@ -12,8 +12,9 @@ function ExpertOption() {
       );
 
       const data = await response.json();
-      setSignal(data);
+      setSignal([...signal, data]);
       console.log(data);
+      console.log(data.pair);
     } catch (error) {
       console.error("Error fetching signals:", error);
     }
@@ -41,6 +42,7 @@ function ExpertOption() {
     });
 
     const data = await res.json();
+    setSignal([...signal, data.message])
     console.log(data);
   };
 
@@ -48,6 +50,7 @@ function ExpertOption() {
   const getStatus = async () => {
     const res = await fetch(`${API}/status`);
     const data = await res.json();
+    setSignal([...signal, data.status])
     console.log(data);
   };
 
@@ -82,8 +85,8 @@ function ExpertOption() {
       <div className="signal-display">
         {signal ? (
           <div>
-            {signal.map((sign) => (
-              <div key={sign.price} className="signal-card">
+            {signal.map((sign, index) => (
+              <div key={index} className="signal-card">
                 <h3>{sign.pair}</h3>
                 <p>Price: {sign.price}</p>
                 <p>Signal: {sign.signal}</p>
