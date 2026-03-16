@@ -4,8 +4,8 @@ import MobileNav from "../components/MobileNav";
 const API = "https://topaz-backend-vvuz.onrender.com";
 
 function ExpertOption() {
-
   const [signals, setSignals] = useState([]);
+  const [updates, setUpdates] = useState([]);
   const [loading, setLoading] = useState(true);
 
   // -------------------------
@@ -16,9 +16,8 @@ function ExpertOption() {
       const res = await fetch(`${API}/`);
       const data = await res.json();
 
-      setSignals(prev => [...prev, data.message]);
+      setUpdates((prev) => [...prev, data.message]);
       console.log(data);
-
     } catch (error) {
       console.error("Server error:", error);
     }
@@ -32,9 +31,8 @@ function ExpertOption() {
       const res = await fetch(`${API}/status`);
       const data = await res.json();
 
-      setSignals(prev => [...prev, data.status]);
+      setUpdates((prev) => [...prev, data.status]);
       console.log(data);
-
     } catch (error) {
       console.error("Status error:", error);
     }
@@ -50,7 +48,6 @@ function ExpertOption() {
 
       setSignals(data);
       console.log(data);
-
     } catch (error) {
       console.error("Signal error:", error);
     }
@@ -62,14 +59,13 @@ function ExpertOption() {
   const stopBot = async () => {
     try {
       const res = await fetch(`${API}/stop`, {
-        method: "POST"
+        method: "POST",
       });
 
       const data = await res.json();
 
-      setSignals(prev => [...prev, data.message]);
+      setUpdates((prev) => [...prev, data.message]);
       console.log(data);
-
     } catch (error) {
       console.error("Stop error:", error);
     }
@@ -92,8 +88,13 @@ function ExpertOption() {
   const now = new Date();
 
   const days = [
-    "Sunday","Monday","Tuesday","Wednesday",
-    "Thursday","Friday","Saturday"
+    "Sunday",
+    "Monday",
+    "Tuesday",
+    "Wednesday",
+    "Thursday",
+    "Friday",
+    "Saturday",
   ];
 
   const today = days[now.getDay()];
@@ -105,22 +106,39 @@ function ExpertOption() {
   // -------------------------
   return (
     <div className="expert-display white-bg-2">
-
       <MobileNav />
 
       {/* SIGNAL DISPLAY */}
       <div className="signal-display">
         <ul>
-          {signals.map((signal, index) => (
+          {updates.map((update, index) => (
             <li key={index}>
-                {signal}
-                <div className="contain-justify-between">
+              {update}
+              <div className="contain-justify-between date">
                 <div></div>
                 <div>
                   {today} - {hour}:{minute}
                 </div>
               </div>
-              <hr />
+              <hr></hr>
+            </li>
+          ))}
+
+          {signals.map((signal, index) => (
+            <li key={index}>
+              <p>Pair: {signal.pair}</p>
+              <p>Price: {signal.price}</p>
+              <p>Signal: {signal.signal}</p>
+              <p>Strength: {signal.strength}</p>
+              <p>Timeframe: {signal.time_frame}</p>
+              <p>Entry Time: {signal.entry_time}</p>
+              <p>Entry: {signal.entry_time}</p>
+              <div className="contain-justify-between date">
+                <div></div>
+                <div>
+                  {today} - {hour}:{minute}
+                </div>
+              </div>
             </li>
           ))}
         </ul>
@@ -128,7 +146,6 @@ function ExpertOption() {
 
       {/* ACTION BUTTONS */}
       <div className="action-btn">
-
         <div className="contain-justify">
           <button onClick={startServer}>Server</button>
           <button onClick={getSignals}>Start</button>
@@ -138,19 +155,15 @@ function ExpertOption() {
           <button onClick={getStatus}>Status</button>
           <button onClick={stopBot}>Stop</button>
         </div>
-
       </div>
-
     </div>
   );
 }
 
 export default ExpertOption;
 
-
-
-
-{/* <div>
+{
+  /* <div>
           {signals.map((signal, index) => (
             <div key={index} className="signal-card">
               <h3>{signal.pair}</h3>
@@ -169,4 +182,5 @@ export default ExpertOption;
               <hr />
             </div>
           ))}
-        </div> */}
+        </div> */
+}
