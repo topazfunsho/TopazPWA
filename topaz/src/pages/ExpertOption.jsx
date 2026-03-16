@@ -12,7 +12,7 @@ function ExpertOption() {
       );
 
       const data = await response.json();
-      setSignal([...signal, data]);
+      setSignal([...signal[0], data]);
       console.log(data);
       console.log(data.pair);
     } catch (error) {
