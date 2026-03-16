@@ -1,120 +1,172 @@
 import React, { useEffect, useState } from "react";
 import MobileNav from "../components/MobileNav";
 
+const API = "https://topaz-backend-vvuz.onrender.com";
+
 function ExpertOption() {
-  const API = "https://topaz-backend-vvuz.onrender.com";
-  const [signal, setSignal] = useState([]);
 
-  const getSignals = async () => {
+  const [signals, setSignals] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  // -------------------------
+  // SERVER CHECK
+  // -------------------------
+  const startServer = async () => {
     try {
-      const response = await fetch(
-        "https://topaz-backend-vvuz.onrender.com/signals",
-      );
+      const res = await fetch(`${API}/`);
+      const data = await res.json();
 
-      const data = await response.json();
-      setSignal([...signal[0], data]);
+      setSignals(prev => [...prev, data.message]);
       console.log(data);
-      console.log(data.pair);
+
     } catch (error) {
-      console.error("Error fetching signals:", error);
+      console.error("Server error:", error);
     }
   };
 
-  // const handleStart = ()=>{
-  //     getSignals();
-  //     console.log(data)
-  // }
-
-  //   starting signal with button
-  //   const startBot = async () => {
-  //     const res = await fetch(`${API}/start`, {
-  //       method: "POST",
-  //     });
-
-  //     const data = await res.json();
-  //     console.log(data);
-  //   };
-
-  //   stopping signal with button
-  const stopBot = async () => {
-    const res = await fetch(`${API}/stop`, {
-      method: "POST",
-    });
-
-    const data = await res.json();
-    setSignal([...signal, data.message])
-    console.log(data);
-  };
-
-  // checking status of signal if still running
+  // -------------------------
+  // GET BOT STATUS
+  // -------------------------
   const getStatus = async () => {
-    const res = await fetch(`${API}/status`);
-    const data = await res.json();
-    setSignal([...signal, data.status])
-    console.log(data);
+    try {
+      const res = await fetch(`${API}/status`);
+      const data = await res.json();
+
+      setSignals(prev => [...prev, data.status]);
+      console.log(data);
+
+    } catch (error) {
+      console.error("Status error:", error);
+    }
   };
 
+  // -------------------------
+  // GET TRADING SIGNALS
+  // -------------------------
+  const getSignals = async () => {
+    try {
+      const res = await fetch(`${API}/signals`);
+      const data = await res.json();
+
+      setSignals(data);
+      console.log(data);
+
+    } catch (error) {
+      console.error("Signal error:", error);
+    }
+  };
+
+  // -------------------------
+  // STOP BOT
+  // -------------------------
+  const stopBot = async () => {
+    try {
+      const res = await fetch(`${API}/stop`, {
+        method: "POST"
+      });
+
+      const data = await res.json();
+
+      setSignals(prev => [...prev, data.message]);
+      console.log(data);
+
+    } catch (error) {
+      console.error("Stop error:", error);
+    }
+  };
+
+  // -------------------------
+  // LOADING EFFECT
+  // -------------------------
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setLoading(false);
+    }, 3000);
+
+    return () => clearTimeout(timer);
+  }, []);
+
+  // -------------------------
+  // TIME INFO
+  // -------------------------
   const now = new Date();
 
-  const day = now.getDay();
+  const days = [
+    "Sunday","Monday","Tuesday","Wednesday",
+    "Thursday","Friday","Saturday"
+  ];
+
+  const today = days[now.getDay()];
   const hour = now.getHours();
   const minute = now.getMinutes();
 
-  const days = [
-    "Sunday",
-    "Monday",
-    "Tuesday",
-    "Wednesday",
-    "Thursday",
-    "Friday",
-    "Saturday",
-  ];
-
-  const today = days[new Date().getDay()];
-
-  const [loading, setLoading] = useState(true);
-  useEffect(() => {
-    setTimeout(() => {
-      setLoading(false);
-    }, 3000);
-  }, []);
-
+  // -------------------------
+  // UI
+  // -------------------------
   return (
     <div className="expert-display white-bg-2">
+
       <MobileNav />
+
+      {/* SIGNAL DISPLAY */}
       <div className="signal-display">
-        {signal ? (
-          <div>
-            {signal.map((sign, index) => (
-              <div key={index} className="signal-card">
-                <h3>{sign.pair}</h3>
-                <p>Price: {sign.price}</p>
-                <p>Signal: {sign.signal}</p>
-                <p>Strength: {sign.strength}</p>
-                <p>Timeframe: {sign.time_frame}</p>
-                <p>Entry Time: {sign.entry_time}</p>
-                <p>Expiry: {sign.expiry}</p>
+        <ul>
+          {signals.map((signal, index) => (
+            <li key={index}>
+                {signal}
                 <div className="contain-justify-between">
-                  <div></div>
-                  <div>
-                    {today} - {hour}:{minute}
-                  </div>
+                <div></div>
+                <div>
+                  {today} - {hour}:{minute}
                 </div>
-                <hr />
               </div>
-            ))}
-          </div>
-        ) : (
-            <div className="loader"></div>
-        )}
+              <hr />
+            </li>
+          ))}
+        </ul>
       </div>
+
+      {/* ACTION BUTTONS */}
       <div className="action-btn">
-        <button onClick={getSignals}>Start</button>
-        <button onClick={getStatus}>Status</button>
-        <button onClick={stopBot}>Stop</button>
+
+        <div className="contain-justify">
+          <button onClick={startServer}>Server</button>
+          <button onClick={getSignals}>Start</button>
+        </div>
+
+        <div className="contain-justify">
+          <button onClick={getStatus}>Status</button>
+          <button onClick={stopBot}>Stop</button>
+        </div>
+
       </div>
+
     </div>
   );
 }
 
 export default ExpertOption;
+
+
+
+
+{/* <div>
+          {signals.map((signal, index) => (
+            <div key={index} className="signal-card">
+              <h3>{signal.pair}</h3>
+              <p>Price: {signal.price}</p>
+              <p>Signal: {signal.signal}</p>
+              <p>Strength: {signal.strength}</p>
+              <p>Timeframe: {signal.time_frame}</p>
+              <p>Entry Time: {signal.entry_time}</p>
+              <p>Expiry: {signal.expiry}</p>
+              <div className="contain-justify-between">
+                <div></div>
+                <div>
+                  {today} - {hour}:{minute}
+                </div>
+              </div>
+              <hr />
+            </div>
+          ))}
+        </div> */}
