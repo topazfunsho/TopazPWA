@@ -4,9 +4,64 @@ import MobileNav from "../components/MobileNav";
 const API = "https://topaz-backend-vvuz.onrender.com";
 
 function ExpertOption() {
+
   const [signals, setSignals] = useState([]);
   const [updates, setUpdates] = useState([]);
+  const [running, setRunning] = useState(false);
   const [loading, setLoading] = useState(true);
+
+  // -------------------------
+  // START BOT + START FETCHING
+  // -------------------------
+  const startBot = async () => {
+    try {
+      const res = await fetch(`${API}/start`, { method: "POST" });
+      const data = await res.json();
+
+      setUpdates(prev => [...prev, data.message]);
+      setRunning(true);
+
+    } catch (error) {
+      console.error("Start error:", error);
+    }
+  };
+
+  // -------------------------
+  // AUTO FETCH SIGNALS
+  // -------------------------
+  useEffect(() => {
+    if (!running) return;
+
+    const interval = setInterval(async () => {
+      try {
+        const res = await fetch(`${API}/signals`);
+        const data = await res.json();
+
+        setSignals(data);
+
+      } catch (err) {
+        console.error("Fetch error:", err);
+      }
+    }, 5000);
+
+    return () => clearInterval(interval);
+  }, [running]);
+
+  // -------------------------
+  // STOP BOT
+  // -------------------------
+  const stopBot = async () => {
+    try {
+      const res = await fetch(`${API}/stop`, { method: "POST" });
+      const data = await res.json();
+
+      setUpdates(prev => [...prev, data.message]);
+      setRunning(false);
+
+    } catch (error) {
+      console.error("Stop error:", error);
+    }
+  };
 
   // -------------------------
   // SERVER CHECK
@@ -16,58 +71,25 @@ function ExpertOption() {
       const res = await fetch(`${API}/`);
       const data = await res.json();
 
-      setUpdates((prev) => [...prev, data.message]);
-      console.log(data);
+      setUpdates(prev => [...prev, data.message]);
+
     } catch (error) {
       console.error("Server error:", error);
     }
   };
 
   // -------------------------
-  // GET BOT STATUS
+  // GET STATUS
   // -------------------------
   const getStatus = async () => {
     try {
       const res = await fetch(`${API}/status`);
       const data = await res.json();
 
-      setUpdates((prev) => [...prev, data.status]);
-      console.log(data);
+      setUpdates(prev => [...prev, data.status]);
+
     } catch (error) {
       console.error("Status error:", error);
-    }
-  };
-
-  // -------------------------
-  // GET TRADING SIGNALS
-  // -------------------------
-  const getSignals = async () => {
-    try {
-      const res = await fetch(`${API}/signals`);
-      const data = await res.json();
-
-      setSignals(data);
-      console.log(data);
-    } catch (error) {
-      console.error("Signal error:", error);
-    }
-  };
-
-  // -------------------------
-  // STOP BOT
-  // -------------------------
-  const stopBot = async () => {
-    try {
-      const res = await fetch(`${API}/stop`, {
-        method: "POST",
-      });
-
-      const data = await res.json();
-
-      setUpdates((prev) => [...prev, data.message]);
-      console.log(data);
-    } catch (error) {
-      console.error("Stop error:", error);
     }
   };
 
@@ -75,27 +97,15 @@ function ExpertOption() {
   // LOADING EFFECT
   // -------------------------
   useEffect(() => {
-    const timer = setTimeout(() => {
-      setLoading(false);
-    }, 3000);
-
+    const timer = setTimeout(() => setLoading(false), 2000);
     return () => clearTimeout(timer);
   }, []);
 
   // -------------------------
-  // TIME INFO
+  // TIME
   // -------------------------
   const now = new Date();
-
-  const days = [
-    "Sunday",
-    "Monday",
-    "Tuesday",
-    "Wednesday",
-    "Thursday",
-    "Friday",
-    "Saturday",
-  ];
+  const days = ["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"];
 
   const today = days[now.getDay()];
   const hour = now.getHours();
@@ -111,76 +121,56 @@ function ExpertOption() {
       {/* SIGNAL DISPLAY */}
       <div className="signal-display">
         <ul>
+
+          {/* SYSTEM UPDATES */}
           {updates.map((update, index) => (
-            <li key={index}>
+            <li key={`update-${index}`}>
               {update}
               <div className="contain-justify-between date">
                 <div></div>
-                <div>
-                  {today} - {hour}:{minute}
-                </div>
+                <div>{today} - {hour}:{minute}</div>
               </div>
-              <hr></hr>
+              <hr />
             </li>
           ))}
 
+          {/* SIGNALS */}
           {signals.map((signal, index) => (
-            <li key={index}>
-              <p>Pair: {signal.pair}</p>
+            <li key={`signal-${index}`}>
+              <p><strong>{signal.pair}</strong></p>
               <p>Price: {signal.price}</p>
               <p>Signal: {signal.signal}</p>
               <p>Strength: {signal.strength}</p>
               <p>Timeframe: {signal.time_frame}</p>
-              <p>Entry Time: {signal.entry_time}</p>
               <p>Entry: {signal.entry_time}</p>
+
               <div className="contain-justify-between date">
                 <div></div>
-                <div>
-                  {today} - {hour}:{minute}
-                </div>
+                <div>{today} - {hour}:{minute}</div>
               </div>
+              <hr />
             </li>
           ))}
+
         </ul>
       </div>
 
       {/* ACTION BUTTONS */}
       <div className="action-btn">
+
         <div className="contain-justify">
           <button onClick={startServer}>Server</button>
-          <button onClick={getSignals}>Start</button>
+          <button onClick={startBot}>Start</button>
         </div>
 
         <div className="contain-justify">
           <button onClick={getStatus}>Status</button>
           <button onClick={stopBot}>Stop</button>
         </div>
+
       </div>
     </div>
   );
 }
 
 export default ExpertOption;
-
-{
-  /* <div>
-          {signals.map((signal, index) => (
-            <div key={index} className="signal-card">
-              <h3>{signal.pair}</h3>
-              <p>Price: {signal.price}</p>
-              <p>Signal: {signal.signal}</p>
-              <p>Strength: {signal.strength}</p>
-              <p>Timeframe: {signal.time_frame}</p>
-              <p>Entry Time: {signal.entry_time}</p>
-              <p>Expiry: {signal.expiry}</p>
-              <div className="contain-justify-between">
-                <div></div>
-                <div>
-                  {today} - {hour}:{minute}
-                </div>
-              </div>
-              <hr />
-            </div>
-          ))}
-        </div> */
-}
