@@ -161,9 +161,10 @@ form{
 }
 .loader {
   border: 6px solid #f3f3f3;
-  border-top: 6px solid rgb(118, 118, 118);
-  border-right: 6px solid rgb(65, 65, 65);
+  border-top: 6px solid black;
+  border-right: 6px solid black;
   border-bottom: 6px solid black;
+  border-left: 6px solid blue;
   border-radius: 50%;
   width: 40px;
   height: 40px;
