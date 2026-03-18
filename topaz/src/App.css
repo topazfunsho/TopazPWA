@@ -132,7 +132,10 @@ li{
   display: flex;
   justify-content: space-between;
   align-items: center;
-}\.btn
+}
+.btn{
+  width: 100px;
+}
 .btn, .full-btn{
   padding: .6rem 1.8rem;
   border-radius: 50px;
