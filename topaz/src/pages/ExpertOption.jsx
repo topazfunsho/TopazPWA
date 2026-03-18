@@ -145,7 +145,9 @@ function ExpertOption() {
         ) : (
           <ul>
             {/* SIGNALS */}
-            {signals.map((signal, index) => (
+            {signals
+            ?.filter(signal => signal && signal.pair)
+            .map((signal, index) => (
               <li key={`signal-${index}`}>
                 <p>
                   <strong>{signal.pair}</strong>
