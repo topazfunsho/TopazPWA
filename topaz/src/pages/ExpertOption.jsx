@@ -17,8 +17,16 @@ function ExpertOption() {
     try {
       const res = await fetch(`${API}/start`, { method: "POST" });
       const data = await res.json();
+      const timeNow = new Date();
 
-      setUpdates((prev) => [...prev, data.message]);
+    //   setUpdates((prev) => [...prev, data.message]);
+      setUpdates((prev) => [
+        ...prev,
+        {
+          text: data.message,
+          time: timeNow.toLocaleTimeString(),
+        },
+      ]);
       setRunning(true);
     } catch (error) {
       console.error("Start error:", error);
@@ -36,7 +44,14 @@ function ExpertOption() {
         const res = await fetch(`${API}/signals`);
         const data = await res.json();
 
-        setSignals(data);
+        const timeNow = new Date();
+
+        const newSignals = data.map((signal) => ({
+          ...signal,
+          displayTime: timeNow.toLocaleTimeString(),
+        }));
+
+        setSignals((prev) => [...prev, ...newSignals]); // ✅ append, not replace
       } catch (err) {
         console.error("Fetch error:", err);
       }
@@ -52,8 +67,16 @@ function ExpertOption() {
     try {
       const res = await fetch(`${API}/stop`, { method: "POST" });
       const data = await res.json();
+      const timeNow = new Date();
 
-      setUpdates((prev) => [...prev, data.message]);
+    //   setUpdates((prev) => [...prev, data.message]);
+      setUpdates((prev) => [
+        ...prev,
+        {
+          text: data.message,
+          time: timeNow.toLocaleTimeString(),
+        },
+      ]);
       setRunning(false);
     } catch (error) {
       console.error("Stop error:", error);
@@ -69,8 +92,16 @@ function ExpertOption() {
 
       const res = await fetch(`${API}/`);
       const data = await res.json();
+      const timeNow = new Date();
 
-      setUpdates((prev) => [...prev, data.message]);
+    //   setUpdates((prev) => [...prev, data.message]);
+    setUpdates((prev) => [
+        ...prev,
+        {
+          text: data.message,
+          time: timeNow.toLocaleTimeString(),
+        },
+      ]);
     } catch (error) {
       console.error("Server error:", error);
       setUpdates((prev) => [...prev, "❌ Server failed"]);
@@ -86,8 +117,16 @@ function ExpertOption() {
     try {
       const res = await fetch(`${API}/status`);
       const data = await res.json();
+      const timeNow = new Date();
 
-      setUpdates((prev) => [...prev, data.status]);
+    //   setUpdates((prev) => [...prev, data.status]);
+    setUpdates((prev) => [
+        ...prev,
+        {
+          text: data.message,
+          time: timeNow.toLocaleTimeString(),
+        },
+      ]);
     } catch (error) {
       console.error("Status error:", error);
     }
@@ -122,14 +161,14 @@ function ExpertOption() {
   // ---------------------------
   // AUTO SCROLL
   // ---------------------------
-  useEffect(() => {
-    if (scrollRef.current) {
-      scrollRef.current.scrollTo({
-        top: scrollRef.current.scrollHeight,
-        behavior: "smooth",
-      });
-    }
-  }, [signals, updates]);
+    useEffect(() => {
+      if (scrollRef.current) {
+        scrollRef.current.scrollTo({
+          top: scrollRef.current.scrollHeight,
+          behavior: "smooth",
+        });
+      }
+    }, [signals, updates]);
 
   // -------------------------
   // UI
@@ -146,37 +185,33 @@ function ExpertOption() {
           <ul>
             {/* SIGNALS */}
             {signals
-            ?.filter(signal => signal && signal.pair)
-            .map((signal, index) => (
-              <li key={`signal-${index}`}>
-                <p>
-                  <strong>{signal.pair}</strong>
-                </p>
-                <p>Price: {signal.price}</p>
-                <p>Signal: {signal.signal}</p>
-                <p>Strength: {signal.strength}</p>
-                <p>Timeframe: {signal.time_frame}</p>
-                <p>Entry: {signal.entry_time}</p>
+              .filter((signal) => signal !== null)
+              .map((signal, index) => (
+                <li key={`signal-${index}`}>
+                  <p>
+                    <strong>{signal.pair}</strong>
+                  </p>
+                  <p>Price: {signal.price}</p>
+                  <p>Signal: {signal.signal}</p>
+                  <p>Strength: {signal.strength}</p>
+                  <p>Timeframe: {signal.time_frame}</p>
+                  <p>Entry: {signal.entry_time}</p>
 
-                <div className="contain-justify-between date">
-                  <div></div>
-                  <div>
-                    {today} - {hour}:{minute}
+                  <div className="contain-justify-between date">
+                    <div></div>
+                    <div>{signal.time}</div>
                   </div>
-                </div>
-                <hr />
-              </li>
-            ))}
+                  <hr />
+                </li>
+              ))}
 
             {/* SYSTEM UPDATES */}
             {updates.map((update, index) => (
               <li key={`update-${index}`}>
-                {update}
+                {update.text}
                 <div className="contain-justify-between date">
                   <div></div>
-                  <div>
-                    {today} - {hour}:{minute}
-                  </div>
+                  <div>{update.time}</div>
                 </div>
                 <hr />
               </li>
