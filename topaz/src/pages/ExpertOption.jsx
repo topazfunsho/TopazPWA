@@ -217,7 +217,7 @@ function ExpertOption() {
 
                   <div className="contain-justify-between date">
                     <div></div>
-                    <div>{signal.time}</div>
+                    <div>{signal.entry_time}</div>
                   </div>
                   <hr />
                 </li>
