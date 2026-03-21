@@ -85,6 +85,7 @@
   font-size: 1rem;
   border-radius: 50px;
   justify-self: center;
+  color: white;
 }
 .block-display{
   display: block;
@@ -145,6 +146,16 @@ li{
 .full-btn{
   width: 100%;
 }
+.stop{
+  background-color: red;
+}
+.status{
+  background-color: yellow;
+}
+.start{
+  background-color: green;
+}
+
 
 .btn:hover, .broker-option button:hover{
   color: white;

@@ -9,6 +9,7 @@ function ExpertOption() {
   const [running, setRunning] = useState(false);
   const [loading, setLoading] = useState(false);
   const scrollRef = useRef(null);
+  const isActive = false;
 
   // -------------------------
   // START BOT + START FETCHING
@@ -19,7 +20,7 @@ function ExpertOption() {
       const data = await res.json();
       const timeNow = new Date();
 
-    //   setUpdates((prev) => [...prev, data.message]);
+      //   setUpdates((prev) => [...prev, data.message]);
       setUpdates((prev) => [
         ...prev,
         {
@@ -69,7 +70,7 @@ function ExpertOption() {
       const data = await res.json();
       const timeNow = new Date();
 
-    //   setUpdates((prev) => [...prev, data.message]);
+      //   setUpdates((prev) => [...prev, data.message]);
       setUpdates((prev) => [
         ...prev,
         {
@@ -94,8 +95,8 @@ function ExpertOption() {
       const data = await res.json();
       const timeNow = new Date();
 
-    //   setUpdates((prev) => [...prev, data.message]);
-    setUpdates((prev) => [
+      //   setUpdates((prev) => [...prev, data.message]);
+      setUpdates((prev) => [
         ...prev,
         {
           text: data.message,
@@ -119,14 +120,15 @@ function ExpertOption() {
       const data = await res.json();
       const timeNow = new Date();
 
-    //   setUpdates((prev) => [...prev, data.status]);
-    setUpdates((prev) => [
+      //   setUpdates((prev) => [...prev, data.status]);
+      setUpdates((prev) => [
         ...prev,
         {
           text: data.message,
           time: timeNow.toLocaleTimeString(),
         },
       ]);
+      
     } catch (error) {
       console.error("Status error:", error);
     }
@@ -161,14 +163,30 @@ function ExpertOption() {
   // ---------------------------
   // AUTO SCROLL
   // ---------------------------
-    useEffect(() => {
-      if (scrollRef.current) {
-        scrollRef.current.scrollTo({
-          top: scrollRef.current.scrollHeight,
-          behavior: "smooth",
-        });
-      }
-    }, [signals, updates]);
+  useEffect(() => {
+    if (scrollRef.current) {
+      scrollRef.current.scrollTo({
+        top: scrollRef.current.scrollHeight,
+        behavior: "smooth",
+      });
+    }
+  }, [signals, updates]);
+
+  // ----------------------
+  // DYNAMIC BUTTON STYLES
+  // -----------------------
+  //   const styles = {
+  //     container: {
+  //       backgroundColor: "black",
+  //       display: "block",
+  //       marginBottom: "1rem",
+  //       padding: ".6rem 2.6rem",
+  //       fontSize: "1rem",
+  //       borderRadius: "50px",
+  //       justifySelf: "center",
+  //       color: "white"
+  //     },
+  //   };
 
   // -------------------------
   // UI
@@ -185,7 +203,7 @@ function ExpertOption() {
           <ul>
             {/* SIGNALS */}
             {signals
-              .filter((signal) => signal !== null)
+              ?.filter((signal) => signal && signal.pair)
               .map((signal, index) => (
                 <li key={`signal-${index}`}>
                   <p>
@@ -223,15 +241,34 @@ function ExpertOption() {
       {/* ACTION BUTTONS */}
       <div className="action-btn">
         <div className="contain-justify">
-          <button onClick={startServer} disabled={loading}>
+          <button
+            style={{ backgroundColor: isActive ? "green" : "black" }}
+            onClick={startServer}
+            disabled={loading}
+          >
             Server
           </button>
-          <button onClick={startBot}>Start</button>
+          <button
+            style={{ backgroundColor: isActive ? "green" : "black" }}
+            onClick={startBot}
+          >
+            Start
+          </button>
         </div>
 
         <div className="contain-justify">
-          <button onClick={getStatus}>Status</button>
-          <button onClick={stopBot}>Stop</button>
+          <button
+            style={{ backgroundColor: isActive ? "green" : "black" }}
+            onClick={getStatus}
+          >
+            Status
+          </button>
+          <button
+            style={{ backgroundColor: isActive ? "green" : "black" }}
+            onClick={stopBot}
+          >
+            Stop
+          </button>
         </div>
       </div>
     </div>
