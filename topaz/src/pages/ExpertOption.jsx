@@ -9,7 +9,10 @@ function ExpertOption() {
   const [running, setRunning] = useState(false);
   const [loading, setLoading] = useState(false);
   const scrollRef = useRef(null);
-  const isActive = false;
+  const [start, setStart] = useState(false);
+  const [server, setServer] = useState(false);
+  const [stop, setStop] = useState(false);
+  const [status, setStatus] = useState(false);
 
   // -------------------------
   // START BOT + START FETCHING
@@ -24,11 +27,14 @@ function ExpertOption() {
       setUpdates((prev) => [
         ...prev,
         {
+          type: "update", // ✅ IMPORTANT
           text: data.message,
-          time: timeNow.toLocaleTimeString(),
+          time: new Date().toISOString(), // ✅ for sorting
+          displayTime: timeNow.toLocaleTimeString(),
         },
       ]);
       setRunning(true);
+      setStart(true);
     } catch (error) {
       console.error("Start error:", error);
     }
@@ -49,6 +55,8 @@ function ExpertOption() {
 
         const newSignals = data.map((signal) => ({
           ...signal,
+          type: "signal", // ✅ IMPORTANT
+          time: new Date().toISOString(), // ✅ for sorting
           displayTime: timeNow.toLocaleTimeString(),
         }));
 
@@ -56,7 +64,7 @@ function ExpertOption() {
       } catch (err) {
         console.error("Fetch error:", err);
       }
-    }, 5000);
+    }, 60000);
 
     return () => clearInterval(interval);
   }, [running]);
@@ -74,11 +82,16 @@ function ExpertOption() {
       setUpdates((prev) => [
         ...prev,
         {
+          type: "update", // ✅ IMPORTANT
           text: data.message,
-          time: timeNow.toLocaleTimeString(),
+          time: new Date().toISOString(), // ✅ for sorting
+          displayTime: timeNow.toLocaleTimeString(),
         },
       ]);
       setRunning(false);
+      setStop(true);
+      setStart(false);
+      setStatus(false);
     } catch (error) {
       console.error("Stop error:", error);
     }
@@ -99,10 +112,13 @@ function ExpertOption() {
       setUpdates((prev) => [
         ...prev,
         {
+          type: "update", // ✅ IMPORTANT
           text: data.message,
-          time: timeNow.toLocaleTimeString(),
+          time: new Date().toISOString(), // ✅ for sorting
+          displayTime: timeNow.toLocaleTimeString(),
         },
       ]);
+      setServer(true);
     } catch (error) {
       console.error("Server error:", error);
       setUpdates((prev) => [...prev, "❌ Server failed"]);
@@ -114,21 +130,23 @@ function ExpertOption() {
   // -------------------------
   // GET STATUS
   // -------------------------
+
   const getStatus = async () => {
     try {
       const res = await fetch(`${API}/status`);
       const data = await res.json();
       const timeNow = new Date();
 
-      //   setUpdates((prev) => [...prev, data.status]);
       setUpdates((prev) => [
         ...prev,
         {
-          text: data.message,
-          time: timeNow.toLocaleTimeString(),
+          type: "update", // ✅ IMPORTANT
+          text: data.status,
+          time: new Date().toISOString(), // ✅ for sorting
+          displayTime: timeNow.toLocaleTimeString(),
         },
       ]);
-      
+      setStatus(true);
     } catch (error) {
       console.error("Status error:", error);
     }
@@ -187,7 +205,9 @@ function ExpertOption() {
   //       color: "white"
   //     },
   //   };
-
+  const combined = [...signals, ...updates].sort(
+    (a, b) => new Date(a.time) - new Date(b.time),
+  );
   // -------------------------
   // UI
   // -------------------------
@@ -202,7 +222,7 @@ function ExpertOption() {
         ) : (
           <ul>
             {/* SIGNALS */}
-            {signals
+            {/* {signals
               ?.filter((signal) => signal && signal.pair)
               .map((signal, index) => (
                 <li key={`signal-${index}`}>
@@ -221,10 +241,10 @@ function ExpertOption() {
                   </div>
                   <hr />
                 </li>
-              ))}
+              ))} */}
 
             {/* SYSTEM UPDATES */}
-            {updates.map((update, index) => (
+            {/* {updates.map((update, index) => (
               <li key={`update-${index}`}>
                 {update.text}
                 <div className="contain-justify-between date">
@@ -232,6 +252,41 @@ function ExpertOption() {
                   <div>{update.time}</div>
                 </div>
                 <hr />
+              </li>
+            ))} */}
+
+            {combined
+            ?.filter(item => item && item.entry_time || item.text) 
+            .map((item, index) => (
+              <li key={index}>
+                {item.type === "signal" ? (
+                  <div>
+                    <p>
+                      <strong>{item.pair}</strong>
+                    </p>
+                    <p>Price: {item.price}</p>
+                    <p>Signal: {item.signal}</p>
+                    <p>Strength: {item.strength}</p>
+                    <p>Timeframe: {item.time_frame}</p>
+                    <p>Entry: {item.entry_time}</p>
+
+                    <div className="contain-justify-between date">
+                      <div></div>
+                      <div>{item.displayTime}</div>
+                    </div>
+                    <hr />
+                  </div>
+                ) : (
+                  <div>
+                    <p>{item.text}</p>
+
+                    <div className="contain-justify-between date">
+                      <div></div>
+                      <div>{item.displayTime}</div>
+                    </div>
+                    <hr />
+                  </div>
+                )}
               </li>
             ))}
           </ul>
@@ -242,14 +297,14 @@ function ExpertOption() {
       <div className="action-btn">
         <div className="contain-justify">
           <button
-            style={{ backgroundColor: isActive ? "green" : "black" }}
+            style={{ backgroundColor: server ? "blue" : "black" }}
             onClick={startServer}
             disabled={loading}
           >
             Server
           </button>
           <button
-            style={{ backgroundColor: isActive ? "green" : "black" }}
+            style={{ backgroundColor: start ? "green" : "black" }}
             onClick={startBot}
           >
             Start
@@ -258,13 +313,13 @@ function ExpertOption() {
 
         <div className="contain-justify">
           <button
-            style={{ backgroundColor: isActive ? "green" : "black" }}
+            style={{ backgroundColor: status ? "orange" : "black" }}
             onClick={getStatus}
           >
             Status
           </button>
           <button
-            style={{ backgroundColor: isActive ? "green" : "black" }}
+            style={{ backgroundColor: stop ? "red" : "black" }}
             onClick={stopBot}
           >
             Stop
