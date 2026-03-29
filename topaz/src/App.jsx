@@ -4,6 +4,10 @@ import Onboarding from "./components/Onboarding";
 import Home from "./pages/Home";
 import Coming from "./components/Coming";
 import ExpertOption from "./pages/ExpertOption";
+import About from "./pages/About";
+import Settings from "./pages/Settings";
+import Notifications from "./components/Notifications";
+import History from "./pages/History";
 import './App.css'
 import { useScreenSize } from "./hooks/useScreenSize";
 import { Routes, Route } from "react-router-dom";
@@ -30,6 +34,10 @@ function MobileLayout() {
       <Route path="/coming" element={<Coming />} />
       <Route path="/expertoption" element={<ExpertOption />} />
       <Route path="/profile" element={<Profile />} />
+      <Route path="/about" element={<About />} />
+      <Route path="/settings" element={<Settings />} />
+      <Route path="/history" element={<History />} />
+      <Route path="/notifications" element={<Notifications />} />
     </Routes>
   );
 }

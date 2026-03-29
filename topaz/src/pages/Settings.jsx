@@ -2,7 +2,7 @@ import React from 'react'
 import { Link } from "react-router-dom";
 import { FaUser } from "react-icons/fa";
 import MobileNav from '../components/MobileNav';
-function Profile() {
+function Settings() {
   return (
     <div className='contain-center-3'>
         <div className='contain-center-2'>
@@ -23,4 +23,4 @@ function Profile() {
   )
 }
 
-export default Profile
+export default Settings
